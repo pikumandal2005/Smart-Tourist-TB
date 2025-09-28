@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tourist {
+  id                 Int        @id @default(autoincrement())
+  uniqueId           String     @unique
+  email              String     @unique
+  mobile             String?
+  passwordHash       String
+  fullName           String
+  aadhaarNumber      String?
+  emergencyDetails   Json?
+  companionsCount    Int        @default(0)
+  gender             String?
+  language           String?    @default("en")
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  tourPlans          TourPlan[]
+  pings              LocationPing[]
+  alerts             Alert[]
+  expenditures       Expenditure[]
+  safetyScores       SafetyScore[]
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+}
+
+model TourPlan {
+  id                  Int       @id @default(autoincrement())
+  touristId           Int
+  tourist             Tourist   @relation(fields: [touristId], references: [id])
+  startDate           DateTime
+  endDate             DateTime
+  locationName        String
+  latitude            Float
+  longitude           Float
+  geofenceRadiusMeters Int      @default(1000)
+  createdAt           DateTime  @default(now())
+}
+
+model LocationPing {
+  id         Int      @id @default(autoincrement())
+  touristId  Int
+  tourist    Tourist  @relation(fields: [touristId], references: [id])
+  latitude   Float
+  longitude  Float
+  speedKmh   Float?
+  createdAt  DateTime @default(now())
+}
+
+model Alert {
+  id         Int      @id @default(autoincrement())
+  touristId  Int
+  tourist    Tourist  @relation(fields: [touristId], references: [id])
+  type       String
+  message    String?
+  resolved   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Expenditure {
+  id         Int      @id @default(autoincrement())
+  touristId  Int
+  tourist    Tourist  @relation(fields: [touristId], references: [id])
+  item       String
+  amount     Float
+  createdAt  DateTime @default(now())
+}
+
+model SafetyScore {
+  id         Int      @id @default(autoincrement())
+  touristId  Int
+  tourist    Tourist  @relation(fields: [touristId], references: [id])
+  score      Int
+  reason     String?
+  createdAt  DateTime @default(now())
+}
+
+model LedgerBlock {
+  id        Int      @id @default(autoincrement())
+  index     Int      @unique
+  prevHash  String?
+  dataJson  String
+  dataHash  String
+  timestamp DateTime @default(now())
+}
