@@ -5,7 +5,9 @@ WORKDIR /app
 
 # Install dependencies first (leverage Docker layer caching)
 COPY package*.json ./
-RUN npm ci --only=production
+# Copy prisma schema so postinstall can run prisma generate during install
+COPY prisma ./prisma
+RUN npm ci --omit=dev
 
 # Copy application source
 COPY . .
