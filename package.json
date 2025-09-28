@@ -9,9 +9,10 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
     "prisma:deploy": "prisma migrate deploy",
+    "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "postinstall": "prisma generate",
-    "prestart": "npm run prisma:deploy"
+    "prestart": "npm run prisma:push"
   },
   "keywords": [],
   "author": "",
