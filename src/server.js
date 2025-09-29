@@ -1,4 +1,10 @@
 require('dotenv').config();
+
+console.log('GMAIL_USER:', process.env.GMAIL_USER);
+console.log('GMAIL_APP_PASSWORD:', process.env.GMAIL_APP_PASSWORD ? 'Loaded' : 'Not Loaded');
+
+console.log('GMAIL_USER:', process.env.GMAIL_USER);
+console.log('GMAIL_APP_PASSWORD:', process.env.GMAIL_APP_PASSWORD ? 'Loaded' : 'Not Loaded');
 const express = require('express');
 const cors = require('cors');
 const http = require('http');
