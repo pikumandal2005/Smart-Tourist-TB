@@ -29,6 +29,8 @@ const registerSchema = z.object({
 router.post('/tourist/register', async (req, res) => {
   try {
     const data = registerSchema.parse(req.body);
+    const existingTourist = await prisma.tourist.findUnique({ where: { email: data.email } });
+    if (existingTourist) return res.status(409).json({ error: 'Email already registered' });
     const uniqueId = genUniqueId();
     const passwordHash = await bcrypt.hash(data.password, 10);
     const tourist = await prisma.tourist.create({
@@ -68,6 +70,7 @@ const forgotSchema = z
   .refine((v) => v.email || v.id, { message: 'Email or ID is required' });
 
 router.post('/tourist/forgot', async (req, res) => {
+  console.log('Received forgot password request with body:', req.body);
   try {
     const { email, id } = forgotSchema.parse(req.body);
     const tourist = email
@@ -85,6 +88,7 @@ router.post('/tourist/forgot', async (req, res) => {
     );
     res.json({ ok: true });
   } catch (e) {
+    console.error('Error in forgot password endpoint:', e);
     res.status(400).json({ error: e.message });
   }
 });

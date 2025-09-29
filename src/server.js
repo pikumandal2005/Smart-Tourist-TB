@@ -8,7 +8,12 @@ const { addBlock } = require('./utils/ledger');
 const { analyzePing } = require('./utils/ai');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? 'https://tourist-buddy-frontend.onrender.com' 
+    : '*',
+  credentials: true
+}));
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -20,7 +25,13 @@ app.use('/tourist', require('./routes/tourist'));
 app.use('/admin', require('./routes/admin'));
 
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
+const io = new Server(server, { 
+  cors: { 
+    origin: process.env.NODE_ENV === 'production' 
+      ? 'https://tourist-buddy-frontend.onrender.com' 
+      : '*' 
+  } 
+});
 
 io.on('connection', (socket) => {
   socket.on('tourist:location', async (payload) => {
